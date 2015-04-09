@@ -4,6 +4,8 @@ module JsonApiClient
     class << self
       def parse(klass, response)
         data = response.body
+        return klass.new(data['data']) if data['data'].is_a?(Hash)
+
         ResultSet.build(klass, data) do |result_set|
           handle_meta(result_set, data)
           handle_pagination(result_set, data)

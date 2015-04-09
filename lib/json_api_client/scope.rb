@@ -8,14 +8,15 @@ module JsonApiClient
     end
 
     def where(conditions = {})
-      @params.merge!(conditions)
+      @params.merge!(filter: conditions)
       self
     end
-    alias paginate where
 
-    def order(conditions)
-      where(order: conditions)
+    def sort(conditions)
+      @params.merge!(sort: conditions)
+      self
     end
+    alias order sort
 
     def includes(*tables)
       @params[:includes] ||= []
@@ -24,7 +25,8 @@ module JsonApiClient
     end
 
     def page(number)
-      where(page: number)
+      @params.merge!(page: number)
+      self
     end
 
     def first
