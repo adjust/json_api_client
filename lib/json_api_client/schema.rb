@@ -1,6 +1,6 @@
 module JsonApiClient
   class Schema
-    Property = Struct.new(:name, :type, :default) do
+    Property = Struct.new(:name, :type, :default, :block) do
       def cast(value)
         return nil if value.nil?
         return value if type.nil?
@@ -18,6 +18,9 @@ module JsonApiClient
           else
             !!value
           end
+        when :custom
+          raise(ArgumentError, 'Please provide a code block to parse custom type value') unless block
+          block.call(value)
         else
           value
         end
@@ -34,9 +37,10 @@ module JsonApiClient
     # @param options [Hash] property options
     # @option options [Symbol] :type The property type
     # @option options [Symbol] :default The default value for the property
+    # @option options [Symbol] :block A code block to parse a custom type value
     # @return [void]
     def add(name, options)
-      @properties[name.to_sym] = Property.new(name.to_sym, options[:type], options[:default])
+      @properties[name.to_sym] = Property.new(name.to_sym, options[:type], options[:default], options[:block])
     end
 
     # How many properties are defined
