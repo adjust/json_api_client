@@ -25,7 +25,12 @@ module JsonApiClient
     end
 
     def page(number)
-      @params.merge!(page: number)
+      set_page(:number, number)
+      self
+    end
+
+    def per(size)
+      set_page(:size, size)
       self
     end
 
@@ -46,5 +51,11 @@ module JsonApiClient
       to_a.send(method_name, *args, &block)
     end
 
+    private
+
+    def set_page(option, number)
+      @params[:page] ||= {}
+      @params[:page][option] = number
+    end
   end
 end
